@@ -1,0 +1,368 @@
+@name Gunstand 4
+@inputs EGP:wirelink EGP2:wirelink Ranger Ranger2 Cash X Y Use InUse Memory On X2 Y2 Use2
+@outputs TextPrice:string Sreset User User2 Sold Earned SpawnAmount
+@outputs Power NextSale [SelectedItem Guns Prices Desc Text]:array
+
+if(first() | duped()) {
+    Text = array( "Insira o dinheiro aqui", "Fora de estoque", "Fora de estoque" )
+    TextPrice = Text[1,string]
+    Guns = array( "Remington 870", "Barret M82" )
+    Desc = array( "Uma arma de calibre 12.", "Uma arma de calibre .50." )
+    SelectedItem = array( 0, 0, 0 )
+    Prices = array( 200, 250 )
+    timer("text reset",250)
+    Sreset = 1
+}
+
+#Holy Auto Gunstand 4 by Holywiremod @ http://www.youtube.com/user/SouthJeffersonDavis 
+
+if(Sreset == 1) {
+    timer("reset",250)
+    if(clk("reset")) {Sreset = 0}
+}
+
+if(~Cash) {
+    if(Cash == 0) {
+        Text[1,string] = "Insert Money Here" 
+    }
+    else {
+        Text[1,string] = "Inserted Money:    $"+Cash   
+    }  
+    TextPrice = Text[1,string]
+}
+
+if(~Ranger || ~Memory) {
+    if(Ranger == 0) {
+        Text[2,string] = "Out of Stock" 
+        EGP2:egpColor(4,vec(20,20,20))
+        EGP2:egpColor(16,vec(100,100,100))
+    }
+    else {
+        Text[2,string] = Guns[1,string]  
+        EGP2:egpColor(4,vec(50,50,50))
+        EGP2:egpColor(16,vec(255,255,255))
+    }  
+}
+
+if(~Ranger2 || ~Memory) {
+    if(Ranger2 == 0) {
+        Text[3,string] = "Out of Stock" 
+        EGP2:egpColor(5,vec(20,20,20))
+        EGP2:egpColor(17,vec(100,100,100))
+    }
+    else {
+        Text[3,string] = Guns[2,string] 
+        EGP2:egpColor(5,vec(50,50,50))   
+        EGP2:egpColor(17,vec(255,255,255))   
+    }  
+}
+
+if(clk("NextSale")) {
+    NextSale = 0
+    SelectedItem[2,number] = 0     
+}
+
+if(Power == 0 & On) {
+    Power = 1
+    print("================================")
+    print("Welcome to Auto Gunstand 4 by Holywiremod")
+    print("================================")
+    print("Hints:")
+    print("-Press the [USE] key to select buttons on the touch screen.")
+    print("-Numpad 1 opens the fading door.")
+    print("-Use the keyboard to change what gun you are selling.")
+    soundPlay(1,0,"/buttons/button19.wav")
+####Drawing EGP
+    EGP:egpBox(1,vec2(5 + 502/2,5 + 80/2),vec2(502,80))         #Header Bar
+    EGP:egpBox(2,vec2(5 + 502/2,507 - 80/2),vec2(502,80))       #Footer Bar  
+    
+    EGP:egpBox(3,vec2(6 + 502/8,90 + 40/2),vec2(502/4,40))                #Currently Selling Bar
+    EGP:egpBox(4,vec2(257 + 502/8,90 + 40/2),vec2(502*(3/4),40))          #Currently Selling Entry Bar
+    EGP:egpBox(5,vec2(6 + 502/8,135 + 40/2),vec2(502/4,40))               #Desc Bar
+    EGP:egpBox(6,vec2(257 + 502/8,135 + 40/2),vec2(502*(3/4),40))         #Desc Entry Bar
+    EGP:egpBox(7,vec2(6 + 502/8,180 + 40/2),vec2(502/4,40))               #Price Bar  
+    EGP:egpBox(8,vec2(257 + 502/8,180 + 40/2),vec2(502*(3/4),40))         #Price Entry Bar  
+    EGP:egpBox(9,vec2(6 + 502/8,225 + 40/2),vec2(502/4,40))               #Guns Sold Bar
+    EGP:egpBox(10,vec2(257 + 502/8,225 + 40/2),vec2(502*(3/4),40))        #Guns Sold Data Bar
+    EGP:egpBox(11,vec2(6 + 502/8,270 + 40/2),vec2(502/4,40))              #Money Earned Bar  
+    EGP:egpBox(12,vec2(257 + 502/8,270 + 40/2),vec2(502*(3/4),40))        #Money Earned Data Bar  
+
+    EGP:egpText(13,"Auto Gunstand 4",vec2(35,10))                                                            #Header
+    EGP:egpSize(13,64)                                                                                       #Header
+    EGP:egpText(14,"This is a touch screen device. Press your [USE] key on the buttons.",vec2(5,507 - 75))   #Footer
+    EGP:egpText(15,"Use the keyboard below to change what gun you are selling.",vec2(30,507 - 55))           #Footer
+    EGP:egpText(16,"Made by Holywiremod",vec2(512/3,507 - 25))                                               #Footer
+
+    EGP:egpText(17,"Selling",vec2(22,93))
+    EGP:egpSize(17,32)
+    EGP:egpText(18,Guns[1,string],vec2(135,93))
+    EGP:egpSize(18,32)
+    EGP:egpText(19,"Desc",vec2(35,137))
+    EGP:egpSize(19,32)
+    EGP:egpText(20,Desc[1,string],vec2(135,142))
+    EGP:egpSize(20,26)
+    EGP:egpText(21,"Price",vec2(33,182))
+    EGP:egpSize(21,32)
+    EGP:egpText(22,"$"+Prices[1,number],vec2(135,182))
+    EGP:egpSize(22,32)
+    EGP:egpText(23,"Sold",vec2(37,227))
+    EGP:egpSize(23,32)
+    EGP:egpText(24,Sold+" Gun(s)",vec2(135,227))
+    EGP:egpSize(24,32)
+    EGP:egpText(25,"Earned",vec2(22,272))
+    EGP:egpSize(25,32)
+    EGP:egpText(26,"$"+Earned,vec2(135,272))
+    EGP:egpSize(26,32)
+    
+    EGP:egpText(27,"Available Keyboard Keys:",vec2(22,315))
+    EGP:egpSize(27,32)
+    EGP:egpText(28,"Shift, Backspace, and Delete",vec2(22,347))
+    EGP:egpSize(28,23)
+    EGP:egpText(29,"Numpad + or -: Add or remove $10 to price.",vec2(22,367))
+    EGP:egpSize(29,23)
+    EGP:egpText(30,"Up Arrow or Down Arrow: Select text field to edit.",vec2(22,387))
+    EGP:egpSize(30,23)
+    
+    EGP:egpCircle(31,vec2(512 - 60,180 + 40/2),vec2(15,15))          #Raise Price Button
+    EGP:egpCircle(32,vec2(512 - 25,180 + 40/2),vec2(15,15))          #Lower Price Button
+    
+    EGP:egpText(33,"+",vec2(512 - 70,181))
+    EGP:egpSize(33,32)
+    EGP:egpText(34,"-",vec2(512 - 30,181))
+    EGP:egpSize(34,32)
+    
+    EGP:egpCircle(35,vec2(512 - 60,90 + 40/2),vec2(15,15))          #Gun 1 Button
+    EGP:egpCircle(36,vec2(512 - 25,90 + 40/2),vec2(15,15))          #Gun 2 Button
+    
+    EGP:egpText(37,"1",vec2(512 - 69,92))
+    EGP:egpSize(37,32)
+    EGP:egpText(38,"2",vec2(512 - 33,92))
+    EGP:egpSize(38,32)
+   
+####Coloring    
+    EGP:egpColor(1,vec(8,60,115))         #Header Bar
+    EGP:egpColor(2,vec(8,60,115))         #Footer Bar
+    
+    EGP:egpColor(3,vec(8,60,115))         #Currently Selling Bar
+    EGP:egpColor(4,vec(50,50,50))         #Currently Selling Entry Bar
+    EGP:egpColor(5,vec(8,60,115))         #Desc Bar
+    EGP:egpColor(6,vec(50,50,50))         #Desc Entry Bar
+    EGP:egpColor(7,vec(8,60,115))         #Price Bar  
+    EGP:egpColor(8,vec(50,50,50))         #Price Entry Bar  
+    EGP:egpColor(9,vec(8,60,115))         #Guns Sold Bar
+    EGP:egpColor(10,vec(50,50,50))        #Guns Sold Data Bar
+    EGP:egpColor(11,vec(8,60,115))        #Money Earned Bar  
+    EGP:egpColor(12,vec(50,50,50))        #Money Earned Data Bar   
+    
+    EGP:egpColor(16,vec(200,200,0))       #Credit
+    
+    EGP:egpColor(27,vec(255,255,255))       #Key Command
+    EGP:egpColor(28,vec(58,110,165))        #Key Command
+    EGP:egpColor(29,vec(58,110,165))        #Key Command
+    EGP:egpColor(30,vec(58,110,165))        #Key Command
+    
+    EGP:egpColor(31,vec(58,110,165))        #Raise Price Button 
+    EGP:egpColor(32,vec(58,110,165))        #Lower Price Button
+    
+    EGP:egpColor(35,vec(58,110,165))        #Gun 1 Button 
+    EGP:egpColor(36,vec(58,110,165))        #Gun 2 Button
+    
+####Drawing EGP2
+    EGP2:egpBox(1,vec2(5 + 502/2,5 + 80/2),vec2(502,80))         #Header Bar
+    EGP2:egpBox(2,vec2(5 + 502/2,507 - 80/2),vec2(502,80))       #Footer Bar  
+    
+    EGP2:egpBox(3,vec2(5 + 502/2,90 + 40/2),vec2(502,40))                  #Currently Selling Bar
+    EGP2:egpBox(4,vec2(5 + 502/2,135 + 40/2),vec2(502,40))                 #Gun 1 Bar 
+    EGP2:egpBox(5,vec2(5 + 502/2,180 + 40/2),vec2(502,40))                 #Gun 2 Bar
+    EGP2:egpBox(6,vec2(5 + 502/2,225 + 40/2),vec2(502,40))                 #Gun Desc Bar
+    EGP2:egpBox(7,vec2(5 + 502/2,270 + 153/2),vec2(502,153 ))              #Gun Desc Text Bar
+    EGP2:egpBox(8,vec2(175 + 160/2,355 + 50/2),vec2(160,50))               #Purchase Button  
+
+    EGP2:egpText(11,"Auto Gunstand 4",vec2(35,10))                                                            #Header
+    EGP2:egpSize(11,64)                                                                                       #Header
+    EGP2:egpText(12,"This is a touch screen device. Press your [USE] key on the buttons.",vec2(5,507 - 75))   #Footer
+    EGP2:egpText(13,"Press the Purchase button to buy the selected gun.",vec2(60,507 - 55))                   #Footer
+    EGP2:egpText(14,"Made by Holywiremod",vec2(512/3,507 - 25))                                               #Footer
+
+    EGP2:egpText(15,"Select a gun below.",vec2(15,93))
+    EGP2:egpSize(15,32)
+    EGP2:egpText(16,Text[2,string] + " - $" + Prices[1,number],vec2(15,137))
+    EGP2:egpSize(16,32)
+    EGP2:egpText(17,Text[3,string] + " - $" + Prices[2,number],vec2(15,182))
+    EGP2:egpSize(17,32)
+    EGP2:egpText(18,"Description: "+Guns[SelectedItem[2,number],string],vec2(15,227))
+    EGP2:egpSize(18,32)
+    EGP2:egpText(19,""+Desc[SelectedItem[2,number],string],vec2(15,271))
+    EGP2:egpSize(19,32)
+    EGP2:egpText(20,"Purchase",vec2(195,363))
+    EGP2:egpSize(20,32)
+    
+####Coloring    
+    EGP2:egpColor(1,vec(8,60,115))         #Header Bar
+    EGP2:egpColor(2,vec(8,60,115))         #Footer Bar
+    
+    EGP2:egpColor(3,vec(8,60,115))         #Currently Selling Bar
+    EGP2:egpColor(4,vec(20,20,20))         #Gun 1 Bar
+    EGP2:egpColor(5,vec(20,20,20))         #Gun 2 Bar  
+    EGP2:egpColor(6,vec(8,60,115))         #Gun Desc Bar  
+    EGP2:egpColor(7,vec(50,50,50))         #Gun Desc Text Bar  
+    EGP2:egpColor(8,vec(100,150,100))      #Purchase Button   
+    
+    EGP2:egpColor(14,vec(200,200,0))         #Credit
+    EGP2:egpColor(16,vec(100,100,100))       #Text
+    EGP2:egpColor(17,vec(100,100,100))       #Text
+    EGP2:egpColor(18,vec(255,255,255))       #Text
+    EGP2:egpColor(19,vec(255,255,255))       #Text
+    EGP2:egpColor(20,vec(255,255,255))       #Text
+}
+
+if(Power) {
+    if(~Use || ~X || ~Power || ~Memory) {
+        
+        EGP:egpColor(4,vec(50,50,50 + 25*!SelectedItem[3,number]))       #Selected Field - Selling 
+        EGP:egpColor(6,vec(50,50,50 + 25*SelectedItem[3,number]))        #Selected Field - Desc
+        
+        EGP:egpSetText(18,Guns[SelectedItem[1,number]+1,string])
+        EGP:egpSetText(20,Desc[SelectedItem[1,number]+1,string])
+        EGP:egpSetText(22,"$"+Prices[SelectedItem[1,number]+1,number])
+        
+        EGP:egpSetText(24,Sold+" Gun(s)")
+        EGP:egpSetText(26,"$"+Earned)
+        
+        EGP:egpColor(31,vec(58,110,165))        #Raise Price Button 
+        EGP:egpColor(32,vec(58,110,165))        #Lower Price Button
+        
+        EGP:egpColor(35,vec(58-!SelectedItem[1,number]*28,110-!SelectedItem[1,number]*80,165-!SelectedItem[1,number]*125))     #Gun 1 Button 
+        EGP:egpColor(36,vec(58-SelectedItem[1,number]*28,110-SelectedItem[1,number]*80,165-SelectedItem[1,number]*125))        #Gun 2 Button
+        
+        if(Y > (363/1000) && Y < (420/1000)) {
+            if(X > (853/1000) && X < (912/1000)) {
+                EGP:egpColor(31,vec(108,160,215))
+                if(Use && ~Use) {
+                    EGP:egpColor(31,vec(158,210,255)) 
+                    Prices[1 + SelectedItem[1,number],number] = Prices[1 + SelectedItem[1,number],number] + 10
+                }  
+            }
+            elseif(X > (922/1000) && X < (980/1000)) {
+                EGP:egpColor(32,vec(108,160,215)) 
+                if(Use && ~Use && Prices[1 + SelectedItem[1,number],number] > 9) {
+                    EGP:egpColor(32,vec(158,210,255)) 
+                    Prices[1 + SelectedItem[1,number],number] = Prices[1 + SelectedItem[1,number],number] - 10
+                } 
+            }
+        }
+        elseif(Y > (187/1000) && Y < (246/1000)) {
+            if(X > (853/1000) && X < (912/1000)) {
+                EGP:egpColor(35,vec(108,160,215))
+                if(Use) {
+                    EGP:egpColor(35,vec(158,210,255)) 
+                    SelectedItem[1,number] = 0
+                }  
+            }
+            elseif(X > (922/1000) && X < (980/1000)) {
+                EGP:egpColor(36,vec(108,160,215)) 
+                if(Use) {
+                    EGP:egpColor(36,vec(158,210,255)) 
+                    SelectedItem[1,number] = 1
+                } 
+            }
+        }
+    }
+    if(~Use2 || ~X2 || ~Power || ~Memory || ~NextSale) {
+        
+        EGP2:egpColor(4,vec(50,50,50))
+        EGP2:egpColor(5,vec(50,50,50))
+        EGP2:egpColor(8,vec(25,75-NextSale*50,25))
+                
+        EGP2:egpSetText(16,Text[2,string] + " - $" + Prices[1,number])
+        EGP2:egpSetText(17,Text[3,string] + " - $" + Prices[2,number])
+        EGP2:egpSetText(18,"Selection: "+Guns[SelectedItem[2,number],string])
+        EGP2:egpSetText(19,""+Desc[SelectedItem[2,number],string])
+        
+        EGP2:egpColor(35,vec(58-!SelectedItem[2,number]*28,110-!SelectedItem[2,number]*80,165-!SelectedItem[2,number]*125))     #Gun 1 Button 
+        EGP2:egpColor(36,vec(58-SelectedItem[2,number]*28,110-SelectedItem[2,number]*80,165-SelectedItem[2,number]*125))        #Gun 2 Button
+        
+        if(Y2 > (263/1000) && Y2 < (341/1000) && X2 > (10/1000) && X2 < (990/1000) && Text[2,string] != "Out of Stock") {
+            EGP2:egpColor(4,vec(108,160,215))
+            if(Use2 && ~Use2) {
+                EGP2:egpColor(4,vec(158,210,255)) 
+                SelectedItem[2,number] = 1
+            }  
+        }
+        elseif(Y2 > (350/1000) && Y2 < (430/1000) && X2 > (10/1000) && X2 < (990/1000) && Text[3,string] != "Out of Stock") {
+            EGP2:egpColor(5,vec(108,160,215))
+            if(Use2 && ~Use2) {
+                EGP2:egpColor(5,vec(158,210,255)) 
+                SelectedItem[2,number] = 2
+            }  
+        }
+        elseif(Y2 > (690/1000) && Y2 < (791/1000) && X2 > (340/1000) && X2 < (660/1000) && SelectedItem[2,number] != 0 && Cash >= Prices[1,number] && NextSale == 0) {
+            EGP2:egpColor(8,vec(100,175,100))
+            if(Use2 && ~Use2) {
+                EGP2:egpColor(8,vec(125,225,125)) 
+                SpawnAmount = Prices[SelectedItem[2,number],number]
+                Earned = Earned + Prices[SelectedItem[2,number],number]
+                Sold++
+                NextSale = 1
+                if(SelectedItem[2,number] == 1) {
+                    User = 1    
+                }
+                elseif(SelectedItem[2,number] == 2) {
+                    User2 = 1
+                }
+                timer("NextSale",2500)
+                hint("You just sold a "+Guns[SelectedItem[2,number],string]+" for $"+Prices[SelectedItem[2,number],number]+"!",5)
+            }
+            else {
+                User = 0
+                User2 = 0
+                SpawnAmount = 0    
+            }  
+        }        
+    }
+    if(InUse && ~Memory) {
+        if(Memory > 32 & Memory < 127 & Guns[1 + SelectedItem[1,number],string]:length() < 30) {
+            if( SelectedItem[3,number] == 0 ) {
+                Guns[1 + SelectedItem[1,number],string] = Guns[1 + SelectedItem[1,number],string] + toChar(Memory) 
+            }
+            else {
+                Desc[1 + SelectedItem[1,number],string] = Desc[1 + SelectedItem[1,number],string] + toChar(Memory)    
+            }
+        }
+        elseif(Memory == 17 || Memory == 18) {
+            SelectedItem[3,number] = !SelectedItem[3,number]
+        }
+        elseif(Memory == 32 & Guns[1 + SelectedItem[1,number],string]:length() < 25) {
+            if( SelectedItem[3,number] == 0 ) {
+                Guns[1 + SelectedItem[1,number],string] = Guns[1 + SelectedItem[1,number],string] + " "
+            }
+            else {
+                Desc[1 + SelectedItem[1,number],string] = Desc[1 + SelectedItem[1,number],string] + " "
+            }
+        }
+        elseif(Memory == 127) {
+            if( SelectedItem[3,number] == 0 ) {
+                Guns[1 + SelectedItem[1,number],string] = Guns[1 + SelectedItem[1,number],string]:sub(1,Guns[1 + SelectedItem[1,number],string]:length()-1)
+            }
+            else {
+                Desc[1 + SelectedItem[1,number],string] = Desc[1 + SelectedItem[1,number],string]:sub(1,Desc[1 + SelectedItem[1,number],string]:length()-1)
+            }
+                    }
+        elseif(Memory == 148) {
+            if( SelectedItem[3,number] == 0 ) {
+                Guns[1 + SelectedItem[1,number],string] = ""
+            }
+            else {
+                Desc[1 + SelectedItem[1,number],string] = ""
+            }
+        }
+        elseif(Memory == 140 && Prices[1 + SelectedItem[1,number],number] > 9) {
+            Prices[1 + SelectedItem[1,number],number] = Prices[1 + SelectedItem[1,number],number] - 10
+        } 
+        elseif(Memory == 141) {
+            Prices[1 + SelectedItem[1,number],number] = Prices[1 + SelectedItem[1,number],number] + 10
+        }             
+    }
+}
+
+#Holy Auto Gunstand 4 by Holywiremod @ http://www.youtube.com/user/SouthJeffersonDavis 
